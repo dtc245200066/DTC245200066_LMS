@@ -1,0 +1,76 @@
+version: '3.8'
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
+
+volumes:
+  db_data:
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: lms_mysql
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-SuperSecr3t_RootP@ssw0rd!2026}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-lms_school_db}
+      MYSQL_USER: ${MYSQL_USER:-lms_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-Lms_Stud3nt_S3curePass#2026}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lms_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: database
+      PMA_USER: ${MYSQL_USER:-lms_user}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-Lms_Stud3nt_S3curePass#2026}
+      PMA_ABSOLUTE_URI: https://localhost/pma/
+    networks:
+      - backend-network
+      - frontend-network
+    depends_on:
+      - database
+
+  lms-app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: lms_web_app
+    restart: always
+    environment:
+      DB_HOST: database
+      DB_USER: ${MYSQL_USER:-lms_user}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-Lms_Stud3nt_S3curePass#2026}
+      DB_NAME: ${MYSQL_DATABASE:-lms_school_db}
+      PORT: 3000
+    networks:
+      - frontend-network
+      - backend-network
+    depends_on:
+      - database
+
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: lms_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - frontend-network
+    depends_on:
+      - lms-app
+      - phpmyadmin

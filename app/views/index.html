@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LMS THCS Portal – Hệ thống học tập trực tuyến</title>
+  <meta name="description" content="Hệ thống LMS Trường THCS – Nền tảng học tập trực tuyến dành cho học sinh khối 6-9." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary:      #2563EB;
+      --color-primary-dark: #1D4ED8;
+      --color-primary-light:#DBEAFE;
+      --color-bg:           #F8FAFC;
+      --color-surface:      #FFFFFF;
+      --color-text:         #0F172A;
+      --color-text-muted:   #64748B;
+      --color-border:       #E2E8F0;
+      --color-success:      #10B981;
+      --color-success-bg:   #D1FAE5;
+      --radius-sm:  8px;
+      --radius-md:  12px;
+      --radius-lg:  16px;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+      --shadow-md:  0 4px 16px rgba(0,0,0,.10);
+      --shadow-lg:  0 12px 36px rgba(37,99,235,.18);
+      --transition: .22s cubic-bezier(.4,0,.2,1);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+    }
+    .header__inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand__icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #1D4ED8 100%);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(37,99,235,.3);
+    }
+    .brand__icon svg { width: 24px; height: 24px; color: #fff; }
+    .brand__name { font-size: 1rem; font-weight: 800; letter-spacing: .04em; color: var(--color-text); }
+    .brand__sub { font-size: .72rem; color: var(--color-text-muted); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-info__label { text-align: right; line-height: 1.35; }
+    .user-info__greeting { font-size: .82rem; color: var(--color-text-muted); }
+    .user-info__name { font-size: .9rem; font-weight: 600; color: var(--color-text); }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #7C3AED 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: .9rem; font-weight: 700;
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* FILTER */
+    .filter-section { margin-bottom: 30px; }
+    .filter-section__label {
+      font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+      color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 12px;
+    }
+    .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .filter-tab {
+      padding: 9px 22px; border-radius: var(--radius-md); font-size: .875rem;
+      font-weight: 500; cursor: pointer; border: 1.5px solid var(--color-border);
+      background: var(--color-surface); color: var(--color-text-muted);
+      transition: all var(--transition);
+    }
+    .filter-tab:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .filter-tab.active {
+      background: var(--color-primary); border-color: var(--color-primary);
+      color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,.3);
+    }
+
+    /* GRID */
+    .subjects-section__heading {
+      font-size: 1.6rem; font-weight: 800; color: var(--color-text);
+      margin-bottom: 24px; letter-spacing: -.02em;
+    }
+    .subjects-section__heading span { color: var(--color-primary); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+
+    /* CARD */
+    .card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border);
+      display: flex; flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition);
+      animation: fadeIn .35s ease forwards;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .card__banner {
+      position: relative; height: 120px; display: flex;
+      flex-direction: column; justify-content: flex-end; padding: 16px;
+    }
+    .card__code {
+      font-size: .68rem; font-weight: 600; text-transform: uppercase;
+      color: rgba(255,255,255,.9); background: rgba(255,255,255,.2);
+      padding: 3px 8px; border-radius: 6px; width: fit-content; margin-bottom: 6px;
+    }
+    .card__subject-name { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .card__body {
+      flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .card__desc { font-size: .84rem; color: var(--color-text-muted); line-height: 1.5; flex: 1; }
+    .card__divider { height: 1px; background: var(--color-border); }
+    .card__cta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+    .badge-enrolled {
+      display: inline-flex; align-items: center; gap: 5px; font-size: .78rem;
+      font-weight: 600; color: var(--color-success); background: var(--color-success-bg);
+      padding: 5px 10px; border-radius: var(--radius-sm);
+    }
+    .btn-enter {
+      font-size: .8rem; font-weight: 600; color: var(--color-primary);
+      padding: 6px 14px; border-radius: var(--radius-sm); border: 1.5px solid var(--color-primary);
+      background: transparent; cursor: pointer; transition: all var(--transition);
+    }
+    .btn-enter:hover { background: var(--color-primary); color: #fff; }
+    .btn-enroll {
+      width: 100%; padding: 9px 16px; background: var(--color-primary); color: #fff;
+      border: none; border-radius: var(--radius-md); font-size: .85rem; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .btn-enroll:hover { background: var(--color-primary-dark); }
+
+    /* Gradients */
+    .grad-6 { background: linear-gradient(135deg, #60A5FA 0%, #2563EB 100%); }
+    .grad-7 { background: linear-gradient(135deg, #34D399 0%, #059669 100%); }
+    .grad-8 { background: linear-gradient(135deg, #FDBA74 0%, #EA580C 100%); }
+    .grad-9 { background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%); }
+
+    /* MODAL BÀI HỌC */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,.6); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff; border-radius: var(--radius-lg); width: 100%; max-width: 600px;
+      max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow-lg); padding: 24px;
+    }
+    .modal__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal__close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted); }
+    .lesson-item { padding: 12px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: 10px; }
+    .lesson-item h4 { color: var(--color-primary); margin-bottom: 4px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
+      opacity: 0; background: var(--color-text); color: #fff; padding: 12px 24px;
+      border-radius: var(--radius-md); font-size: .875rem; font-weight: 500;
+      box-shadow: var(--shadow-md); z-index: 200; transition: all .3s ease;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* FOOTER */
+    .footer { background: var(--color-surface); border-top: 1px solid var(--color-border); padding: 20px 24px; }
+    .footer__inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer__copy { font-size: .8rem; color: var(--color-text-muted); }
+    .footer__dev { font-size: .8rem; color: var(--color-text-muted); }
+    .footer__code { background: var(--color-primary-light); color: var(--color-primary); font-weight: 700; font-size: .78rem; padding: 2px 8px; border-radius: 6px; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
+      <a href="#" class="brand">
+        <div class="brand__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div>
+          <div class="brand__name">LMS THCS PORTAL</div>
+          <div class="brand__sub">Hệ thống học tập trực tuyến</div>
+        </div>
+      </a>
+      <div class="user-info">
+        <div class="user-info__label">
+          <div class="user-info__greeting">Xin chào,</div>
+          <div class="user-info__name">Nguyễn Văn An · Khối 6</div>
+        </div>
+        <div class="avatar">A</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+    <section class="filter-section">
+      <p class="filter-section__label">Lọc theo khối lớp</p>
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all" onclick="filterGrade(this)">Tất cả</button>
+        <button class="filter-tab" data-filter="6" onclick="filterGrade(this)">Khối 6</button>
+        <button class="filter-tab" data-filter="7" onclick="filterGrade(this)">Khối 7</button>
+        <button class="filter-tab" data-filter="8" onclick="filterGrade(this)">Khối 8</button>
+        <button class="filter-tab" data-filter="9" onclick="filterGrade(this)">Khối 9</button>
+      </div>
+    </section>
+
+    <section class="subjects-section">
+      <h1 class="subjects-section__heading">Danh sách <span>môn học cơ bản (Từ MySQL)</span></h1>
+      <div class="grid" id="subject-grid">
+        <p style="grid-column: 1/-1; color: var(--color-text-muted);">Đang kết nối CSDL MySQL và tải danh sách môn...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL BÀI HỌC (DEMO BÀI HỌC THEO ĐỀ 17) -->
+  <div class="modal-overlay" id="lessonModal">
+    <div class="modal">
+      <div class="modal__header">
+        <h3 id="modalCourseTitle">Nội dung bài học</h3>
+        <button class="modal__close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modalLessonList">Đang tải bài giảng...</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <p class="footer__copy">© 2026 LMS THCS Portal. Triển khai bằng Docker Compose.</p>
+      <p class="footer__dev">
+        Phát triển bởi <strong>Lạc Tuấn</strong> &nbsp;|&nbsp;
+        Mã số SV: <span class="footer__code">DTC245200066</span>
+      </p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let currentFilter = 'all';
+
+    // 1. Kéo dữ liệu môn học từ MySQL qua Backend Node.js
+    async function loadCourses() {
+      try {
+        const res = await fetch('/api/courses');
+        const courses = await res.json();
+        const grid = document.getElementById('subject-grid');
+
+        if (!courses || courses.length === 0) {
+          grid.innerHTML = '<p>Chưa có dữ liệu môn học trong CSDL.</p>';
+          return;
+        }
+
+        grid.innerHTML = courses.map(c => `
+          <article class="card" data-grade="${c.grade_level}">
+            <div class="card__banner grad-${c.grade_level}">
+              <span class="card__code">KHỐI ${c.grade_level}</span>
+              <h2 class="card__subject-name">${c.course_name}</h2>
+            </div>
+            <div class="card__body">
+              <p class="card__desc">${c.description || 'Chương trình giảng dạy chuẩn của Bộ GD&ĐT.'}</p>
+              <div class="card__divider"></div>
+              <div class="card__cta" id="cta-${c.id}">
+                <button class="btn-enroll" onclick="enrollCourse(${c.id}, '${c.course_name}')">Đăng ký học</button>
+              </div>
+            </div>
+          </article>
+        `).join('');
+
+        applyFilter();
+      } catch (err) {
+        document.getElementById('subject-grid').innerHTML = '<p style="color:red">Lỗi kết nối cơ sở dữ liệu MySQL!</p>';
+      }
+    }
+
+    // 2. Lọc theo khối lớp
+    function filterGrade(btn) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      applyFilter();
+    }
+
+    function applyFilter() {
+      document.querySelectorAll('.card').forEach(card => {
+        const show = currentFilter === 'all' || card.dataset.grade === currentFilter;
+        card.style.display = show ? 'flex' : 'none';
+      });
+    }
+
+    // 3. Đăng ký học (Gửi API thật vào bảng MySQL enrollments)
+    async function enrollCourse(courseId, courseName) {
+      const cta = document.getElementById('cta-' + courseId);
+      cta.innerHTML = '<span style="font-size:0.85rem; color:#64748b;">Đang lưu vào DB...</span>';
+
+      try {
+        const res = await fetch('/api/enroll', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: 2, courseId: courseId })
+        });
+        const result = await res.json();
+
+        // Cập nhật giao diện thành "Đã đăng ký" & nút "Vào học →"
+        cta.innerHTML = `
+          <span class="badge-enrolled">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"/></svg>
+            Đã đăng ký
+          </span>
+          <button class="btn-enter" onclick="openLessons(${courseId}, '${courseName}')">Vào học →</button>
+        `;
+        showToast('✅ ' + (result.message || 'Đăng ký thành công!'));
+      } catch (err) {
+        showToast('❌ Lỗi khi gửi đăng ký vào Database');
+      }
+    }
+
+    // 4. Mở Popup hiển thị bài giảng (Kéo từ bảng lessons trong MySQL)
+    async function openLessons(courseId, courseName) {
+      const modal = document.getElementById('lessonModal');
+      const title = document.getElementById('modalCourseTitle');
+      const list = document.getElementById('modalLessonList');
+
+      title.textContent = 'Bài học môn: ' + courseName;
+      list.innerHTML = 'Đang tải bài giảng từ MySQL...';
+      modal.classList.add('show');
+
+      try {
+        const res = await fetch('/api/courses/' + courseId + '/lessons');
+        const lessons = await res.json();
+
+        if (!lessons || lessons.length === 0) {
+          list.innerHTML = '<p style="color:#64748b;">Chưa có bài học nào được tạo cho môn này trong CSDL.</p>';
+          return;
+        }
+
+        list.innerHTML = lessons.map(l => `
+          <div class="lesson-item">
+            <h4>${l.title}</h4>
+            <p style="font-size:0.88rem; color:#475569; line-height:1.5;">${l.content}</p>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<p style="color:red">Không thể tải bài học từ máy chủ.</p>';
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('lessonModal').classList.remove('show');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    // Tự động load môn học khi mở trang
+    loadCourses();
+  </script>
+</body>
+</html>
