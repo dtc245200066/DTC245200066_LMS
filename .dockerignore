@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Version control
+.git
+.gitignore
+
+# Sensitive files and environment variables
+.env
+.env.*
+*.pem
+*.key
+nginx/certs/*.pem
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System & Editor files
+.DS_Store
+.idea
+.vscode
